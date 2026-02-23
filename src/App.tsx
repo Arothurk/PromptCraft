@@ -32,7 +32,7 @@ const T = {
     copy:"Copy text", copied:"Copied ✓",
     loaded:(n)=>`${n} dimension${n!==1?"s":""} loaded`,
     settings:"API Configuration",
-    apiProvider:"Provider", apiKey:"API Key", apiModel:"Model", endpoint:"Endpoint",
+    apiProvider:"Provider", apiKey:"API Key", apiModel:"Model", endpoint:"Base URL / Endpoint",
     apiKeyNote:(p)=>p==="anthropic"?"Leave blank for built-in access":p==="gemini"?"Leave blank to use built-in Gemini API Key":p==="custom"?"Optional depending on your setup":"Required",
     saveSettings:"Save", cancelSettings:"Cancel",
     refreshTags:"↻ Refresh", langBtn:"中文",
@@ -84,7 +84,7 @@ Card inputs:\n${summary}`,
     copy:"复制文本", copied:"已复制 ✓",
     loaded:(n)=>`${n} 个维度已装载`,
     settings:"API 配置",
-    apiProvider:"服务商", apiKey:"密钥", apiModel:"模型", endpoint:"接口地址",
+    apiProvider:"服务商", apiKey:"密钥", apiModel:"模型", endpoint:"接口地址 (Base URL)",
     apiKeyNote:(p)=>p==="anthropic"?"留空使用内置权限":p==="gemini"?"留空使用内置 Gemini 密钥":p==="custom"?"根据您的配置选填":"必填",
     saveSettings:"保存", cancelSettings:"取消",
     refreshTags:"↻ 刷新", langBtn:"EN",
@@ -144,7 +144,8 @@ const API_PROVIDERS = {
 async function callAPI({provider,apiKey,model,endpoint,prompt,maxTokens=2800}){
   let actualApiKey = apiKey;
   if (provider === "gemini" && !apiKey) {
-    actualApiKey = process.env.GEMINI_API_KEY;
+    // Fallback to built-in key if available, otherwise it will fail if empty
+    actualApiKey = typeof process !== 'undefined' && process.env && process.env.GEMINI_API_KEY ? process.env.GEMINI_API_KEY : "";
   }
 
   if(provider==="anthropic"){
@@ -572,9 +573,15 @@ export default function PromptCraft(){
   const [addOpen,setAddOpen]=useState(false);
   const [usedDims,setUsedDims]=useState([]);
   const [error,setError]=useState("");
-  const [apiConfig,setApiConfig]=useState({
-    provider:"gemini",model:"gemini-2.5-flash",
-    apiKey:"",endpoint:"https://generativelanguage.googleapis.com/v1beta/openai/chat/completions"
+  const [apiConfig,setApiConfig]=useState(()=>{
+    const saved = localStorage.getItem("apiConfig");
+    if (saved) {
+      try { return JSON.parse(saved); } catch(e) {}
+    }
+    return {
+      provider:"gemini",model:"gemini-2.5-flash",
+      apiKey:"",endpoint:"https://generativelanguage.googleapis.com/v1beta/openai/chat/completions"
+    };
   });
   const nextId=useRef(2);
   const addRef=useRef(null);
@@ -1041,7 +1048,10 @@ export default function PromptCraft(){
       </section>
 
       {settingsOpen&&(
-        <APISettings config={apiConfig} onSave={setApiConfig} onClose={()=>setSettingsOpen(false)} t={t}/>
+        <APISettings config={apiConfig} onSave={(c)=>{
+          setApiConfig(c);
+          localStorage.setItem("apiConfig", JSON.stringify(c));
+        }} onClose={()=>setSettingsOpen(false)} t={t}/>
       )}
     </div>
   );
