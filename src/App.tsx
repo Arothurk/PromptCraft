@@ -135,6 +135,9 @@ const API_PROVIDERS = {
   deepseek: {name:"DeepSeek",          models:["deepseek-chat", "deepseek-reasoner"], defaultModel:"deepseek-chat", endpoint:"https://api.deepseek.com/chat/completions"},
   anthropic:{name:"Anthropic (Claude)",models:["claude-3-7-sonnet-20250219","claude-3-5-sonnet-20241022"],defaultModel:"claude-3-7-sonnet-20250219",endpoint:"https://api.anthropic.com/v1/messages"},
   openai:   {name:"OpenAI (GPT)",      models:["gpt-4o","gpt-4o-mini","gpt-4-turbo"],                           defaultModel:"gpt-4o",                   endpoint:"https://api.openai.com/v1/chat/completions"},
+  qwen:     {name:"Qwen (千问)",         models:["qwen-max", "qwen-plus", "qwen-turbo"],                          defaultModel:"qwen-plus",                endpoint:"https://dashscope.aliyuncs.com/compatible-mode/v1/chat/completions"},
+  kimi:     {name:"Kimi (Moonshot)",   models:["moonshot-v1-8k", "moonshot-v1-32k", "moonshot-v1-128k"],        defaultModel:"moonshot-v1-8k",           endpoint:"https://api.moonshot.cn/v1/chat/completions"},
+  grok:     {name:"Grok (xAI)",        models:["grok-2-latest", "grok-2-vision-latest"],                        defaultModel:"grok-2-latest",            endpoint:"https://api.x.ai/v1/chat/completions"},
   custom:   {name:"Custom",            models:[],                                                               defaultModel:"",                         endpoint:""},
 };
 
@@ -477,11 +480,11 @@ function APISettings({config,onSave,onClose,t}){
           {/* Provider */}
           <div style={{marginBottom:"36px"}}>
             <p style={{fontSize:"9px",letterSpacing:"3px",color:C.ghost,marginBottom:"14px",fontFamily:MONO}}>{t.apiProvider.toUpperCase()}</p>
-            <div style={{display:"flex",gap:"0",flexWrap:"wrap"}}>
+            <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"0"}}>
               {Object.keys(API_PROVIDERS).map((key,i)=>(
                 <button key={key}
                   onClick={()=>setLocal(p=>({...p,provider:key,model:API_PROVIDERS[key].defaultModel,endpoint:API_PROVIDERS[key].endpoint}))}
-                  style={{flex:"1 1 50%",background:local.provider===key?C.ink:C.white,
+                  style={{background:local.provider===key?C.ink:C.white,
                     color:local.provider===key?C.white:C.dim,
                     border:`1px solid ${C.ink}`,
                     padding:"12px 16px",fontFamily:MONO,fontSize:"13px",letterSpacing:"0.8px",
@@ -993,11 +996,12 @@ export default function PromptCraft(){
                     <path d="M 60 40 L 340 40 L 340 260 L 60 260 Z" fill={C.surface} strokeWidth="3"/>
                     
                     {/* Text lines parallel to paper edges */}
-                    <path d="M 100 80 L 200 80" strokeWidth="3"/>
-                    <path d="M 100 110 L 240 110" strokeWidth="3"/>
-                    <path d="M 100 140 L 220 140" strokeWidth="3"/>
-                    <path d="M 100 170 L 260 170" strokeWidth="3"/>
-                    <path d="M 100 200 L 180 200" strokeWidth="3"/>
+                    <path d="M 90 80 L 310 80" strokeWidth="3"/>
+                    <path d="M 90 110 L 280 110" strokeWidth="3"/>
+                    <path d="M 90 140 L 310 140" strokeWidth="3"/>
+                    <path d="M 90 170 L 290 170" strokeWidth="3"/>
+                    <path d="M 90 200 L 180 200" strokeWidth="3"/>
+                    <path d="M 90 230 L 250 230" strokeWidth="3"/>
 
                     <g style={{animation: "writing 2.5s ease-in-out infinite", transformOrigin: "200px 200px"}}>
                       {/* Pen Back */}
