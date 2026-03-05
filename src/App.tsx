@@ -978,6 +978,7 @@ export default function PromptCraft(){
             <div className="m-pad" style={{flex:1,display:"flex",alignItems:"center",justifyContent:"center",
               flexDirection:"column",gap:"28px",padding:"80px 64px",minHeight:"400px"}}>
               {generating?(
+                // 这一段是干什么的捏？一个小动画吗
                 <div style={{textAlign:"center", width: "100%", maxWidth: "240px", display: "flex", flexDirection: "column", alignItems: "center"}}>
                   <svg width="64" height="64" viewBox="0 0 200 240" fill="none" xmlns="http://www.w3.org/2000/svg" style={{marginBottom: '16px'}}>
                     <g style={{animation: "writing 2.5s ease-in-out infinite", transformOrigin: "115px 185px"}}>
@@ -997,36 +998,79 @@ export default function PromptCraft(){
                   </div>
                 </div>
               ):(
-                <div style={{textAlign:"center",maxWidth:"520px", display: "flex", flexDirection: "column", alignItems: "center"}}>
-                  <svg width="240" height="200" viewBox="0 0 400 300" fill="none" stroke={C.ink} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{marginBottom: '24px'}}>
-                    {/* Paper */}
-                    <path d="M 60 40 L 340 40 L 340 260 L 60 260 Z" fill={C.surface} strokeWidth="3"/>
-                    
-                    {/* Text lines parallel to paper edges */}
-                    <path d="M 90 80 L 310 80" strokeWidth="3"/>
-                    <path d="M 90 110 L 280 110" strokeWidth="3"/>
-                    <path d="M 90 140 L 310 140" strokeWidth="3"/>
-                    <path d="M 90 170 L 290 170" strokeWidth="3"/>
-                    <path d="M 90 200 L 180 200" strokeWidth="3"/>
-                    <path d="M 90 230 L 250 230" strokeWidth="3"/>
+                <div style={{textAlign:"center",maxWidth:"1000px", display: "flex", flexDirection: "column", alignItems: "center"}}>
+                <style>{`
+                  .trace {
+                    stroke-dasharray: 140;
+                    stroke-dashoffset: 140;
+                    animation: draw 2.5s ease-in-out infinite alternate;
+                  }
 
-                    <g style={{animation: "writing 2.5s ease-in-out infinite", transformOrigin: "200px 200px"}}>
-                      {/* Pen Back */}
-                      <path d="M 230 150 L 330 50 L 350 70 L 250 170 Z" fill={C.ink} strokeWidth="2"/>
-                      <path d="M 290 90 L 300 100" stroke={C.surface} strokeWidth="2"/> {/* Pen clip/highlight */}
-                      
-                      {/* Pen Front */}
-                      <path d="M 250 170 L 190 200 L 180 200 L 190 190 L 230 150 Z" fill={C.ink} strokeWidth="2"/>
-                      <path d="M 190 200 L 180 200 L 190 190 Z" fill={C.surface} strokeWidth="1.5"/> {/* Nib */}
-                      
-                      {/* Ink trail */}
-                      <path d="M 170 200 Q 175 195 180 200" strokeWidth="3" fill="none"/>
+                  @keyframes draw {
+                    to { stroke-dashoffset: 0; }
+                  }
+
+                  .pen {
+                    offset-path: path("M 160 135 C 190 128, 220 142, 240 135 S 270 128, 285 138");
+                    offset-distance: 0%;
+                    offset-rotate: auto;
+                    animation: move 2.5s ease-in-out infinite alternate;
+                    transform: translate(-70px, -120px);
+                  }
+
+                  @keyframes move {
+                    to { offset-distance: 100%; }
+                  }
+                `}</style>
+
+                <svg
+                  width="240"
+                  height="200"
+                  viewBox="0 0 400 300"
+                  overflow="visible"
+                  fill="none"
+                  stroke={C.ink}
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{marginBottom: '0px'}}
+                >
+                  {/* Paper */}
+                  <path d="M 60 40 L 340 40 L 340 260 L 60 260 Z" fill={C.surface} strokeWidth="3"/>
+
+                  {/* Text lines */}
+                  <path d="M 90 80 L 310 80" strokeWidth="3"/>
+                  <path d="M 90 110 L 280 110" strokeWidth="3"/>
+                  <path d="M 90 140 L 310 140" strokeWidth="3"/>
+                  <path d="M 90 170 L 290 170" strokeWidth="3"/>
+                  <path d="M 90 200 L 170 200" strokeWidth="3"/>
+                  <path d="M 90 230 L 250 230" strokeWidth="3"/>
+                  <g transform="translate(10, 65)">
+                    {/* 笔迹 */}
+                    <path
+                      className="trace"
+                      d="M 160 135 C 190 128, 220 142, 240 135 S 270 128, 285 138"
+                      strokeWidth="3"
+                      fill="none"
+                    />
+
+                    {/* 笔 */}
+                    <g className="pen">
+                      <image
+                        href="/static/img/quill.svg"
+                        x="40"
+                        y="-54"
+                        width="200"
+                        preserveAspectRatio="xMidYMid meet"
+                      />
                     </g>
-                  </svg>
-                  <p style={{fontSize:"15px",color:C.ghost,fontFamily:MONO,lineHeight:1.9,letterSpacing:"0.3px"}}>
-                    {t.emptyStateText}
-                  </p>
-                </div>
+                  </g>
+                </svg>
+
+                <p style={{fontSize:"15px",color:C.ghost,fontFamily:MONO,lineHeight:1.9,letterSpacing:"0.3px"}}>
+                  {t.emptyStateText}
+                </p>
+              </div>
               )}
             </div>
           )}
