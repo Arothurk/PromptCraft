@@ -1,5 +1,6 @@
 // @ts-nocheck
 import { useState, useEffect, useRef, useCallback } from "react";
+import quill from "@/assets/quill.svg"
 
 // ─── Palette ──────────────────────────────────────────────────────────────────
 const C = {
@@ -1057,7 +1058,7 @@ export default function PromptCraft(){
                     {/* 笔 */}
                     <g className="pen">
                       <image
-                        href="/static/img/quill.svg"
+                        href={quill}
                         x="40"
                         y="-54"
                         width="200"
